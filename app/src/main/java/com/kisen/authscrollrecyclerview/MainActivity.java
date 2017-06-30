@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(generateAdapter());
         recyclerView.setLoopEnabled(true);
-        recyclerView.startScroll();
+        recyclerView.startAutoScroll();
     }
 
     private RecyclerView.Adapter generateAdapter() {

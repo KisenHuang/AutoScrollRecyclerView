@@ -55,8 +55,8 @@ public class AutoScrollRecyclerView extends RecyclerView {
     /**
      * 开始滑动
      */
-    public void startScroll() {
-        startScroll(currentSpeed, false);
+    public void startAutoScroll() {
+        startAutoScroll(currentSpeed, false);
     }
 
     /**
@@ -65,7 +65,7 @@ public class AutoScrollRecyclerView extends RecyclerView {
      * @param speed   滑动距离（决定滑动速度）
      * @param reverse 是否反向滑动
      */
-    public void startScroll(int speed, boolean reverse) {
+    public void startAutoScroll(int speed, boolean reverse) {
         mReverse = reverse;
         currentSpeed = speed;
         notifyLayoutManager();
@@ -92,6 +92,14 @@ public class AutoScrollRecyclerView extends RecyclerView {
      */
     public void setLoopEnabled(boolean loopEnabled) {
         this.mLoopEnabled = loopEnabled;
+    }
+
+    /**
+     * 设置是否反向
+     */
+    public void setReverse(boolean reverse) {
+        mReverse = reverse;
+        notifyLayoutManager();
     }
 
     public boolean isLoopEnabled() {
