@@ -16,9 +16,9 @@ import android.view.animation.Interpolator;
  * 版本：
  * 创建时间：on 2017/6/30 13:29.
  */
-public class AuthScrollRecyclerView extends RecyclerView {
+public class AutoScrollRecyclerView extends RecyclerView {
 
-    private static final String TAG = AuthScrollRecyclerView.class.getSimpleName();
+    private static final String TAG = AutoScrollRecyclerView.class.getSimpleName();
     private static final int SPEED = 100;
     private UniformSpeedInterpolator mInterpolator;
     private int mSpeedDx, mSpeedDy;
@@ -27,15 +27,15 @@ public class AuthScrollRecyclerView extends RecyclerView {
     private boolean mLoopEnabled;
     private boolean mReverse;
 
-    public AuthScrollRecyclerView(Context context) {
+    public AutoScrollRecyclerView(Context context) {
         this(context, null);
     }
 
-    public AuthScrollRecyclerView(Context context, @Nullable AttributeSet attrs) {
+    public AutoScrollRecyclerView(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public AuthScrollRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
+    public AutoScrollRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mInterpolator = new UniformSpeedInterpolator();
     }
@@ -145,11 +145,11 @@ public class AuthScrollRecyclerView extends RecyclerView {
     private static class RecyclerViewPagerAdapter<VH extends RecyclerView.ViewHolder>
             extends RecyclerView.Adapter<VH> {
 
-        private AuthScrollRecyclerView mRecyclerView;
+        private AutoScrollRecyclerView mRecyclerView;
         RecyclerView.Adapter<VH> mAdapter;
 
 
-        RecyclerViewPagerAdapter(AuthScrollRecyclerView recyclerView, RecyclerView.Adapter<VH> adapter) {
+        RecyclerViewPagerAdapter(AutoScrollRecyclerView recyclerView, RecyclerView.Adapter<VH> adapter) {
             mAdapter = adapter;
             mRecyclerView = recyclerView;
             setHasStableIds(mAdapter.hasStableIds());
