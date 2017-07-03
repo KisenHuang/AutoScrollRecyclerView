@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 
@@ -23,9 +24,11 @@ public class AutoScrollRecyclerView extends RecyclerView {
     private UniformSpeedInterpolator mInterpolator;
     private int mSpeedDx, mSpeedDy;
     private int currentSpeed = SPEED;
-    private RecyclerViewPagerAdapter<?> mViewPagerAdapter;
     private boolean mLoopEnabled;
     private boolean mReverse;
+    private boolean isOpenAuto;
+    private boolean mCanScrollByTouch;
+    private boolean mPointTouch;
 
     public AutoScrollRecyclerView(Context context) {
         this(context, null);
@@ -40,23 +43,11 @@ public class AutoScrollRecyclerView extends RecyclerView {
         mInterpolator = new UniformSpeedInterpolator();
     }
 
-    @Override
-    public void swapAdapter(Adapter adapter, boolean removeAndRecycleExistingViews) {
-        mViewPagerAdapter = ensureRecyclerViewPagerAdapter(adapter);
-        super.swapAdapter(mViewPagerAdapter, removeAndRecycleExistingViews);
-    }
-
-    @Override
-    public void setAdapter(Adapter adapter) {
-        mViewPagerAdapter = ensureRecyclerViewPagerAdapter(adapter);
-        super.setAdapter(mViewPagerAdapter);
-    }
-
     /**
      * 开始滑动
      */
-    public void startAutoScroll() {
-        startAutoScroll(currentSpeed, false);
+    public void openAutoScroll() {
+        openAutoScroll(currentSpeed, false);
     }
 
     /**
@@ -65,11 +56,34 @@ public class AutoScrollRecyclerView extends RecyclerView {
      * @param speed   滑动距离（决定滑动速度）
      * @param reverse 是否反向滑动
      */
-    public void startAutoScroll(int speed, boolean reverse) {
+    public void openAutoScroll(int speed, boolean reverse) {
         mReverse = reverse;
         currentSpeed = speed;
+        isOpenAuto = true;
         notifyLayoutManager();
-        startSmoothScroll();
+    }
+
+    public void canScrollByTouch(boolean b) {
+        mCanScrollByTouch = b;
+    }
+
+    /**
+     * 设置是否无限循环显示列表
+     */
+    public void setLoopEnabled(boolean loopEnabled) {
+        this.mLoopEnabled = loopEnabled;
+    }
+
+    public boolean isLoopEnabled() {
+        return mLoopEnabled;
+    }
+
+    /**
+     * 设置是否反向
+     */
+    public void setReverse(boolean reverse) {
+        mReverse = reverse;
+        notifyLayoutManager();
     }
 
     private void startSmoothScroll() {
@@ -87,27 +101,63 @@ public class AutoScrollRecyclerView extends RecyclerView {
         }
     }
 
-    /**
-     * 设置是否无限循环显示列表
-     */
-    public void setLoopEnabled(boolean loopEnabled) {
-        this.mLoopEnabled = loopEnabled;
+    @Override
+    public void swapAdapter(Adapter adapter, boolean removeAndRecycleExistingViews) {
+        super.swapAdapter(generateAdapter(adapter), removeAndRecycleExistingViews);
     }
 
-    /**
-     * 设置是否反向
-     */
-    public void setReverse(boolean reverse) {
-        mReverse = reverse;
-        notifyLayoutManager();
+    @Override
+    public void setAdapter(Adapter adapter) {
+        super.setAdapter(generateAdapter(adapter));
     }
 
-    public boolean isLoopEnabled() {
-        return mLoopEnabled;
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent e) {
+        if (mCanScrollByTouch) {
+            switch (e.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    mPointTouch = true;
+                    break;
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_UP:
+                    if (isOpenAuto){
+                        return true;
+                    }
+            }
+            return super.onInterceptTouchEvent(e);
+        } else return true;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        if (mCanScrollByTouch) {
+            switch (e.getAction()) {
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    if (isOpenAuto){
+                        mPointTouch = false;
+                        startSmoothScroll();
+                        return true;
+                    }
+            }
+            return super.onTouchEvent(e);
+        } else return true;
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        if (isOpenAuto)
+            startSmoothScroll();
     }
 
     @Override
     public void onScrolled(int dx, int dy) {
+        if (mPointTouch) {
+            mSpeedDx = 0;
+            mSpeedDy = 0;
+            return;
+        }
         boolean vertical;
         if (dx == 0) {//垂直滚动
             mSpeedDy += dy;
@@ -132,8 +182,8 @@ public class AutoScrollRecyclerView extends RecyclerView {
 
     @NonNull
     @SuppressWarnings("unchecked")
-    private RecyclerViewPagerAdapter ensureRecyclerViewPagerAdapter(Adapter adapter) {
-        return new RecyclerViewPagerAdapter(this, adapter);
+    private NestingRecyclerViewAdapter generateAdapter(Adapter adapter) {
+        return new NestingRecyclerViewAdapter(this, adapter);
     }
 
     /**
@@ -150,14 +200,14 @@ public class AutoScrollRecyclerView extends RecyclerView {
     /**
      * 自定义Adapter容器，使列表可以无限循环显示
      */
-    private static class RecyclerViewPagerAdapter<VH extends RecyclerView.ViewHolder>
+    private static class NestingRecyclerViewAdapter<VH extends RecyclerView.ViewHolder>
             extends RecyclerView.Adapter<VH> {
 
         private AutoScrollRecyclerView mRecyclerView;
         RecyclerView.Adapter<VH> mAdapter;
 
 
-        RecyclerViewPagerAdapter(AutoScrollRecyclerView recyclerView, RecyclerView.Adapter<VH> adapter) {
+        NestingRecyclerViewAdapter(AutoScrollRecyclerView recyclerView, RecyclerView.Adapter<VH> adapter) {
             mAdapter = adapter;
             mRecyclerView = recyclerView;
             setHasStableIds(mAdapter.hasStableIds());
