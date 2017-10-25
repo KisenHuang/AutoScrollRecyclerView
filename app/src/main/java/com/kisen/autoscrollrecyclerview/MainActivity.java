@@ -1,4 +1,4 @@
-package com.kisen.authscrollrecyclerview;
+package com.kisen.autoscrollrecyclerview;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.kisen.lib.AutoScrollRecyclerView;
+import com.zhulong.eduvideo.R;
 
 import java.util.ArrayList;
 import java.util.List;
