@@ -32,7 +32,7 @@ public class AutoScrollRecyclerView extends RecyclerView {
     /**
      * 滑动速度，默认100
      */
-    private int currentSpeed = SPEED;
+    private int mCurrentSpeed = SPEED;
     /**
      * 是否无限循环显示列表
      */
@@ -44,15 +44,23 @@ public class AutoScrollRecyclerView extends RecyclerView {
     /**
      * 是否开启自动滑动
      */
-    private boolean isOpenAuto;
+    private boolean mIsOpenAuto;
     /**
      * 用户是否可以手动滑动屏幕
      */
-    private boolean mCanScrollByTouch;
+    private boolean mCanTouch = true;
     /**
      * 用户是否点击屏幕
      */
     private boolean mPointTouch;
+    /**
+     * 是否准备好数据
+     */
+    private boolean mReady;
+    /**
+     * 是否初始化完成
+     */
+    private boolean mInflat;
 
     public AutoScrollRecyclerView(Context context) {
         this(context, null);
@@ -65,13 +73,14 @@ public class AutoScrollRecyclerView extends RecyclerView {
     public AutoScrollRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mInterpolator = new UniformSpeedInterpolator();
+        mReady = false;
     }
 
     /**
      * 开始滑动
      */
     public void openAutoScroll() {
-        openAutoScroll(currentSpeed, false);
+        openAutoScroll(mCurrentSpeed, false);
     }
 
     /**
@@ -82,16 +91,21 @@ public class AutoScrollRecyclerView extends RecyclerView {
      */
     public void openAutoScroll(int speed, boolean reverse) {
         mReverse = reverse;
-        currentSpeed = speed;
-        isOpenAuto = true;
+        mCurrentSpeed = speed;
+        mIsOpenAuto = true;
         notifyLayoutManager();
+        startScroll();
     }
 
     /**
      * 自动滑动时是否可以手动滑动
      */
-    public void canScrollByTouch(boolean b) {
-        mCanScrollByTouch = b;
+    public void setCanTouch(boolean b) {
+        mCanTouch = b;
+    }
+
+    public boolean canTouch() {
+        return mCanTouch;
     }
 
     /**
@@ -99,6 +113,8 @@ public class AutoScrollRecyclerView extends RecyclerView {
      */
     public void setLoopEnabled(boolean loopEnabled) {
         this.mLoopEnabled = loopEnabled;
+        getAdapter().notifyDataSetChanged();
+        startScroll();
     }
 
     /**
@@ -114,10 +130,29 @@ public class AutoScrollRecyclerView extends RecyclerView {
     public void setReverse(boolean reverse) {
         mReverse = reverse;
         notifyLayoutManager();
+        startScroll();
     }
 
-    private void startSmoothScroll() {
-        int absSpeed = Math.abs(currentSpeed);
+    public boolean getReverse() {
+        return mReverse;
+    }
+
+    /**
+     * 启动滚动
+     */
+    private void startScroll() {
+        if (!mIsOpenAuto)
+            return;
+        if (getScrollState() == SCROLL_STATE_SETTLING)
+            return;
+        if (mInflat && mReady) {
+            mSpeedDx = mSpeedDy = 0;
+            smoothScroll();
+        }
+    }
+
+    private void smoothScroll() {
+        int absSpeed = Math.abs(mCurrentSpeed);
         int d = mReverse ? -absSpeed : absSpeed;
         smoothScrollBy(d, d, mInterpolator);
     }
@@ -134,23 +169,25 @@ public class AutoScrollRecyclerView extends RecyclerView {
     @Override
     public void swapAdapter(Adapter adapter, boolean removeAndRecycleExistingViews) {
         super.swapAdapter(generateAdapter(adapter), removeAndRecycleExistingViews);
+        mReady = true;
     }
 
     @Override
     public void setAdapter(Adapter adapter) {
         super.setAdapter(generateAdapter(adapter));
+        mReady = true;
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent e) {
-        if (mCanScrollByTouch) {
+        if (mCanTouch) {
             switch (e.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     mPointTouch = true;
                     break;
                 case MotionEvent.ACTION_CANCEL:
                 case MotionEvent.ACTION_UP:
-                    if (isOpenAuto) {
+                    if (mIsOpenAuto) {
                         return true;
                     }
             }
@@ -160,13 +197,13 @@ public class AutoScrollRecyclerView extends RecyclerView {
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        if (mCanScrollByTouch) {
+        if (mCanTouch) {
             switch (e.getAction()) {
                 case MotionEvent.ACTION_UP:
                 case MotionEvent.ACTION_CANCEL:
-                    if (isOpenAuto) {
+                    if (mIsOpenAuto) {
                         mPointTouch = false;
-                        startSmoothScroll();
+                        smoothScroll();
                         return true;
                     }
             }
@@ -177,8 +214,13 @@ public class AutoScrollRecyclerView extends RecyclerView {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        if (isOpenAuto)
-            startSmoothScroll();
+        startScroll();
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        mInflat = true;
     }
 
     @Override
@@ -198,14 +240,14 @@ public class AutoScrollRecyclerView extends RecyclerView {
         }
 
         if (vertical) {
-            if (Math.abs(mSpeedDy) >= Math.abs(currentSpeed)) {
+            if (Math.abs(mSpeedDy) >= Math.abs(mCurrentSpeed)) {
                 mSpeedDy = 0;
-                startSmoothScroll();
+                smoothScroll();
             }
         } else {
-            if (Math.abs(mSpeedDx) >= Math.abs(currentSpeed)) {
+            if (Math.abs(mSpeedDx) >= Math.abs(mCurrentSpeed)) {
                 mSpeedDx = 0;
-                startSmoothScroll();
+                smoothScroll();
             }
         }
     }

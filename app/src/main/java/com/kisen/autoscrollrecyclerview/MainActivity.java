@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -17,6 +19,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private AutoScrollRecyclerView recyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,12 +29,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        AutoScrollRecyclerView recyclerView = (AutoScrollRecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = (AutoScrollRecyclerView) findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(generateAdapter());
-        recyclerView.setLoopEnabled(true);
-        recyclerView.openAutoScroll();
-        recyclerView.canScrollByTouch(true);
+//        recyclerView.openAutoScroll();
     }
 
     private RecyclerView.Adapter generateAdapter() {
@@ -39,6 +41,31 @@ public class MainActivity extends AppCompatActivity {
             list.add("Item " + i);
         }
         return new AutoAdapter(list);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_start:
+                recyclerView.openAutoScroll();
+                break;
+            case R.id.action_revert:
+                recyclerView.setReverse(!recyclerView.getReverse());
+                break;
+            case R.id.action_loop:
+                recyclerView.setLoopEnabled(!recyclerView.isLoopEnabled());
+                break;
+            case R.id.action_can_touch:
+                recyclerView.setCanTouch(!recyclerView.canTouch());
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private static class AutoAdapter extends RecyclerView.Adapter<AutoViewHolder> {
