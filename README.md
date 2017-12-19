@@ -1,4 +1,4 @@
-# AuthScrollRecyclerView
+# AutoScrollRecyclerView
 自动滚动的RecyclerView
 
 设置无限滚动
@@ -11,4 +11,4 @@ AutoScrollRecyclerView.openAutoScroll();
 AutoScrollRecyclerView.setReverse(boolean);
 
 设置列表是否可手动滑动
-AutoScrollRecyclerView.canScrollByTouch(boolean);
+AutoScrollRecyclerView.setCanTouch(boolean);
