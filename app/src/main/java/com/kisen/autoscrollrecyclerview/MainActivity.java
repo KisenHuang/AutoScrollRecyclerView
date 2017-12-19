@@ -1,15 +1,12 @@
 package com.kisen.autoscrollrecyclerview;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.kisen.lib.AutoScrollRecyclerView;
 import com.zhulong.eduvideo.R;
@@ -29,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        recyclerView = (AutoScrollRecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(generateAdapter());
 //        recyclerView.openAutoScroll();
@@ -64,44 +61,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_can_touch:
                 recyclerView.setCanTouch(!recyclerView.canTouch());
                 break;
+            case R.id.action_layout_manager:
+                startActivity(new Intent(this, LayoutManagerActivity.class));
+                break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private static class AutoAdapter extends RecyclerView.Adapter<AutoViewHolder> {
-
-        private List<String> items = new ArrayList<>();
-
-        AutoAdapter(List<String> items) {
-            this.items = items;
-        }
-
-        @Override
-        public AutoViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            View content = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
-            return new AutoViewHolder(content);
-        }
-
-        @Override
-        public void onBindViewHolder(AutoViewHolder holder, int position) {
-            holder.bind(items.get(position));
-        }
-
-        @Override
-        public int getItemCount() {
-            return items.size();
-        }
-
-    }
-
-    static class AutoViewHolder extends RecyclerView.ViewHolder {
-
-        AutoViewHolder(View itemView) {
-            super(itemView);
-        }
-
-        void bind(String item) {
-            ((TextView) itemView.findViewById(R.id.item)).setText(item);
-        }
     }
 }
