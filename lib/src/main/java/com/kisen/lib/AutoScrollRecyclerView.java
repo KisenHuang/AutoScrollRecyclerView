@@ -60,7 +60,7 @@ public class AutoScrollRecyclerView extends RecyclerView {
     /**
      * 是否初始化完成
      */
-    private boolean mInflat;
+    private boolean mInflate;
 
     public AutoScrollRecyclerView(Context context) {
         this(context, null);
@@ -145,7 +145,7 @@ public class AutoScrollRecyclerView extends RecyclerView {
             return;
         if (getScrollState() == SCROLL_STATE_SETTLING)
             return;
-        if (mInflat && mReady) {
+        if (mInflate && mReady) {
             mSpeedDx = mSpeedDy = 0;
             smoothScroll();
         }
@@ -212,6 +212,11 @@ public class AutoScrollRecyclerView extends RecyclerView {
     }
 
     @Override
+    public boolean performClick() {
+        return super.performClick();
+    }
+
+    @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         startScroll();
@@ -220,7 +225,7 @@ public class AutoScrollRecyclerView extends RecyclerView {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        mInflat = true;
+        mInflate = true;
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +45,15 @@ public class AutoAdapter extends RecyclerView.Adapter<AutoAdapter.AutoViewHolder
             super(itemView);
         }
 
-        void bind(String item) {
-            ((TextView) itemView.findViewById(R.id.item)).setText(item);
+        void bind(final String item) {
+            TextView viewById = (TextView) itemView.findViewById(R.id.item);
+            viewById.setText(item);
+            viewById.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(v.getContext(), "TOAST : " + item, Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 }

@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 
 /**
  * 自定义Adapter容器，使列表可以无限循环显示
- * Created by huangwy on 2017/12/19.
+ * Created by kisen on 2017/12/19.
  * email: kisenhuang@163.com.
  */
 public class NestingRecyclerViewAdapter extends RecyclerView.Adapter {

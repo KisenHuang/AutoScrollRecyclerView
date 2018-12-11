@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.animation.Interpolator;
 
 /**
- * Created by huangwy on 2017/12/19.
+ * Created by kisen on 2017/12/19.
  * email: kisenhuang@163.com.
  */
 
@@ -19,6 +19,7 @@ public class LayoutManagerHelper {
     private ASOnItemTouchListener mOnItemTouchListener;
     private IScrollInfo mIScrollInfo;
     private int mCurrentSpeed = SPEED;
+    private UniformSpeedInterpolator mInterpolator;
 
     private boolean mLoopEnabled;
     /**
@@ -46,6 +47,7 @@ public class LayoutManagerHelper {
         mOnScrollListener = new ASOnScrollListener(this);
         mOnItemTouchListener = new ASOnItemTouchListener(this);
         mReady = false;
+        mInterpolator = new UniformSpeedInterpolator();
     }
 
     public void onAdapterChanged(Adapter newAdapter) {
@@ -144,7 +146,7 @@ public class LayoutManagerHelper {
         int absSpeed = Math.abs(mCurrentSpeed);
         if (mIScrollInfo != null) {
             int d = mIScrollInfo.getRevert() ? -absSpeed : absSpeed;
-            mRecyclerView.smoothScrollBy(d, d, new UniformSpeedInterpolator());
+            mRecyclerView.smoothScrollBy(d, d, mInterpolator);
         }
     }
 

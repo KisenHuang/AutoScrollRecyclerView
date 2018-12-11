@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 
-import com.kisen.autoscrollrecyclerview.R;
 import com.kisen.layoutmanager.ASLinearLayoutManager;
+import com.kisen.layoutmanager.widget.LayoutManagerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +24,9 @@ public class LayoutManagerActivity extends AppCompatActivity {
         ASLinearLayoutManager layout = new ASLinearLayoutManager(this);
         recyclerView.setLayoutManager(layout);
         recyclerView.setAdapter(generateAdapter());
-        layout.getLayoutManagerHelper().setOpenAuto(true);
+        LayoutManagerHelper layoutManagerHelper = layout.getLayoutManagerHelper();
+        layoutManagerHelper.setOpenAuto(true);
+        layoutManagerHelper.setCanTouch(false);
     }
 
     private RecyclerView.Adapter generateAdapter() {

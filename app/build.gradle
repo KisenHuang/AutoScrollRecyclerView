@@ -10,7 +10,10 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        multiDexEnabled true
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -21,6 +24,8 @@ android {
 
 dependencies {
     testImplementation 'junit:junit:4.12'
-    implementation project(path: ':lib')
-    implementation project(path: ':layoutmanager')
+    api 'com.android.support:multidex:1.0.3'
+
+    api project(':lib')
+    api project(':layoutmanager')
 }
