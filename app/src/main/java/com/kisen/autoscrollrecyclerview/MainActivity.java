@@ -9,7 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.kisen.lib.AutoScrollRecyclerView;
-import com.zhulong.eduvideo.R;
+import com.kisen.autoscrollrecyclerview.R;
 
 import java.util.ArrayList;
 import java.util.List;

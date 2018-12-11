@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 27
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.kisen.authscrollrecyclerview"
         minSdkVersion 15
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -20,7 +20,7 @@ android {
 }
 
 dependencies {
-    testCompile 'junit:junit:4.12'
-    compile project(path: ':lib')
-    compile project(path: ':layoutmanager')
+    testImplementation 'junit:junit:4.12'
+    implementation project(path: ':lib')
+    implementation project(path: ':layoutmanager')
 }
