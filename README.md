@@ -26,7 +26,7 @@ AutoScrollRecyclerView.setCanTouch(boolean);
 ## 升级篇
 使用LayoutManager + RecyclerView.OnItemTouchListener + RecyclerView.OnScrollListener实现该功能。
 
-###---缺点：未实现不可打断效果
+### ---缺点：未实现不可打断效果
 
 通过 ASLinearLayoutManager， ASGridLayoutManager， ASStaggeredGridLayoutManager 三个LayoutManager实现。
 
