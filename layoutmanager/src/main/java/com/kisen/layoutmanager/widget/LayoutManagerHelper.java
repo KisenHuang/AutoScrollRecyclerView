@@ -1,5 +1,6 @@
 package com.kisen.layoutmanager.widget;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
 import android.view.animation.Interpolator;
@@ -12,8 +13,9 @@ import android.view.animation.Interpolator;
 public class LayoutManagerHelper {
 
     private static final int SPEED = 100;
+    private final Context mContext;
     private Adapter mAdapter;
-    private RecyclerView mRecyclerView;
+    RecyclerView mRecyclerView;
     private NestingRecyclerViewAdapter mNestingAdapter;
     private ASOnScrollListener mOnScrollListener;
     private ASOnItemTouchListener mOnItemTouchListener;
@@ -43,7 +45,8 @@ public class LayoutManagerHelper {
      */
     private boolean mInflate;
 
-    public LayoutManagerHelper() {
+    public LayoutManagerHelper(Context context) {
+        mContext = context;
         mOnScrollListener = new ASOnScrollListener(this);
         mOnItemTouchListener = new ASOnItemTouchListener(this);
         mReady = false;
@@ -60,16 +63,20 @@ public class LayoutManagerHelper {
             mRecyclerView.setAdapter(mNestingAdapter);
     }
 
-    public void onAttachedToWindow(RecyclerView view, IScrollInfo scrollSpeed) {
+    public void onAttachedToWindow(RecyclerView view, IScrollInfo scrollInfo) {
         mInflate = true;
         mRecyclerView = view;
-        mIScrollInfo = scrollSpeed;
+        mIScrollInfo = scrollInfo;
         mRecyclerView.addOnScrollListener(mOnScrollListener);
         mRecyclerView.addOnItemTouchListener(mOnItemTouchListener);
         if (mReady && mRecyclerView.getAdapter() != mNestingAdapter) {
             mRecyclerView.setAdapter(mNestingAdapter);
         }
         startScroll();
+    }
+
+    public Context getContext() {
+        return mContext;
     }
 
     /**
@@ -108,11 +115,19 @@ public class LayoutManagerHelper {
         this.mIsOpenAuto = mIsOpenAuto;
     }
 
-    public boolean isPointTouch() {
+    public void setReverseLayout(boolean reverse) {
+        mIScrollInfo.setReverseLayout(reverse);
+    }
+
+    public boolean getReverseLayout() {
+        return mIScrollInfo.getReverseLayout();
+    }
+
+    boolean isPointTouch() {
         return mPointTouch;
     }
 
-    public void setPointTouch(boolean mPointTouch) {
+    void setPointTouch(boolean mPointTouch) {
         this.mPointTouch = mPointTouch;
     }
 
@@ -122,6 +137,8 @@ public class LayoutManagerHelper {
 
     public void setCanTouch(boolean mCanTouch) {
         this.mCanTouch = mCanTouch;
+        if (mRecyclerView != null)
+            mRecyclerView.setEnabled(mCanTouch);
     }
 
     public int getCurrentSpeed() {
@@ -134,7 +151,7 @@ public class LayoutManagerHelper {
     private void startScroll() {
         if (!mIsOpenAuto)
             return;
-        if (mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_SETTLING)
+        if (mRecyclerView != null && mRecyclerView.getScrollState() == RecyclerView.SCROLL_STATE_SETTLING)
             return;
         if (mInflate && mReady) {
             mOnScrollListener.reset();
@@ -144,8 +161,8 @@ public class LayoutManagerHelper {
 
     void smoothScroll() {
         int absSpeed = Math.abs(mCurrentSpeed);
-        if (mIScrollInfo != null) {
-            int d = mIScrollInfo.getRevert() ? -absSpeed : absSpeed;
+        if (mIScrollInfo != null && mRecyclerView != null) {
+            int d = mIScrollInfo.getReverseLayout() ? -absSpeed : absSpeed;
             mRecyclerView.smoothScrollBy(d, d, mInterpolator);
         }
     }

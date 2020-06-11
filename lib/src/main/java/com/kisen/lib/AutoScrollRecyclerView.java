@@ -1,5 +1,6 @@
 package com.kisen.lib;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import android.view.animation.Interpolator;
  */
 public class AutoScrollRecyclerView extends RecyclerView {
 
+    @SuppressWarnings("unused")
     private static final String TAG = AutoScrollRecyclerView.class.getSimpleName();
     private static final int SPEED = 100;
     /**
@@ -192,10 +194,13 @@ public class AutoScrollRecyclerView extends RecyclerView {
                     }
             }
             return super.onInterceptTouchEvent(e);
-        } else return true;
+        } else {
+            return true;
+        }
     }
 
     @Override
+    @SuppressLint("ClickableViewAccessibility")
     public boolean onTouchEvent(MotionEvent e) {
         if (mCanTouch) {
             switch (e.getAction()) {
@@ -208,12 +213,9 @@ public class AutoScrollRecyclerView extends RecyclerView {
                     }
             }
             return super.onTouchEvent(e);
-        } else return true;
-    }
-
-    @Override
-    public boolean performClick() {
-        return super.performClick();
+        } else {
+            return true;
+        }
     }
 
     @Override
@@ -258,7 +260,7 @@ public class AutoScrollRecyclerView extends RecyclerView {
     }
 
     @NonNull
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("all")
     private NestingRecyclerViewAdapter generateAdapter(Adapter adapter) {
         return new NestingRecyclerViewAdapter(this, adapter);
     }
@@ -289,25 +291,26 @@ public class AutoScrollRecyclerView extends RecyclerView {
             mRecyclerView = recyclerView;
         }
 
+        @NonNull
         @Override
-        public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+        public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             return mAdapter.onCreateViewHolder(parent, viewType);
         }
 
         @Override
-        public void registerAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
+        public void registerAdapterDataObserver(@NonNull RecyclerView.AdapterDataObserver observer) {
             super.registerAdapterDataObserver(observer);
             mAdapter.registerAdapterDataObserver(observer);
         }
 
         @Override
-        public void unregisterAdapterDataObserver(RecyclerView.AdapterDataObserver observer) {
+        public void unregisterAdapterDataObserver(@NonNull RecyclerView.AdapterDataObserver observer) {
             super.unregisterAdapterDataObserver(observer);
             mAdapter.unregisterAdapterDataObserver(observer);
         }
 
         @Override
-        public void onBindViewHolder(VH holder, int position) {
+        public void onBindViewHolder(@NonNull VH holder, int position) {
             mAdapter.onBindViewHolder(holder, generatePosition(position));
         }
 

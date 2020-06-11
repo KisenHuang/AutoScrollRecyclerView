@@ -6,5 +6,6 @@ package com.kisen.layoutmanager.widget;
  */
 
 public interface IScrollInfo {
-    boolean getRevert();
+    boolean getReverseLayout();
+    void setReverseLayout(boolean reverse);
 }

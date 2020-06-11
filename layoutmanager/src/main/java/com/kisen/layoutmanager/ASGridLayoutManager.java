@@ -20,21 +20,21 @@ public class ASGridLayoutManager extends GridLayoutManager implements IScrollInf
 
     public ASGridLayoutManager(Context context, int spanCount) {
         super(context, spanCount);
-        init();
+        init(context);
     }
 
     public ASGridLayoutManager(Context context, int spanCount, int orientation, boolean reverseLayout) {
         super(context, spanCount, orientation, reverseLayout);
-        init();
+        init(context);
     }
 
     public ASGridLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init();
+        init(context);
     }
 
-    private void init() {
-        mLayoutManagerHelper = new LayoutManagerHelper();
+    private void init(Context context) {
+        mLayoutManagerHelper = new LayoutManagerHelper(context);
     }
 
     public LayoutManagerHelper getLayoutManagerHelper() {
@@ -55,10 +55,5 @@ public class ASGridLayoutManager extends GridLayoutManager implements IScrollInf
     @Override
     public View onInterceptFocusSearch(View focused, int direction) {
         return super.onInterceptFocusSearch(focused, direction);
-    }
-
-    @Override
-    public boolean getRevert() {
-        return getReverseLayout();
     }
 }

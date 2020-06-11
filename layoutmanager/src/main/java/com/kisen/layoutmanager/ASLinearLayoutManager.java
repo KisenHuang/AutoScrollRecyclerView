@@ -24,16 +24,16 @@ public class ASLinearLayoutManager extends LinearLayoutManager implements IScrol
 
     public ASLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
         super(context, orientation, reverseLayout);
-        init();
+        init(context);
     }
 
     public ASLinearLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init();
+        init(context);
     }
 
-    private void init() {
-        mLayoutManagerHelper = new LayoutManagerHelper();
+    private void init(Context context) {
+        mLayoutManagerHelper = new LayoutManagerHelper(context);
     }
 
     public LayoutManagerHelper getLayoutManagerHelper() {
@@ -56,8 +56,4 @@ public class ASLinearLayoutManager extends LinearLayoutManager implements IScrol
         return super.onInterceptFocusSearch(focused, direction);
     }
 
-    @Override
-    public boolean getRevert() {
-        return getReverseLayout();
-    }
 }

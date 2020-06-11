@@ -20,16 +20,16 @@ public class ASStaggeredGridLayoutManager extends StaggeredGridLayoutManager imp
 
     public ASStaggeredGridLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init();
+        init(context);
     }
 
-    public ASStaggeredGridLayoutManager(int spanCount, int orientation) {
-        super(spanCount, orientation);
-        init();
-    }
+//    public ASStaggeredGridLayoutManager(int spanCount, int orientation) {
+//        super(spanCount, orientation);
+//        init(context);
+//    }
 
-    private void init() {
-        mLayoutManagerHelper = new LayoutManagerHelper();
+    private void init(Context context) {
+        mLayoutManagerHelper = new LayoutManagerHelper(context);
     }
 
     public LayoutManagerHelper getLayoutManagerHelper() {
@@ -52,8 +52,4 @@ public class ASStaggeredGridLayoutManager extends StaggeredGridLayoutManager imp
         return super.onInterceptFocusSearch(focused, direction);
     }
 
-    @Override
-    public boolean getRevert() {
-        return getReverseLayout();
-    }
 }
